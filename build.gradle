@@ -18,12 +18,3 @@ allprojects {
         }
     }
 }
-
-//gradle -q hello
-task hello {
-    println 'Hello world!'
-}
-
-task hello_2 {
-    println 'Hello world 2'
-}
