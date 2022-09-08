@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class CustomerService {
-    public TreeMap<Customer,String> customers;
+    private final TreeMap<Customer,String> customers;
 
     public CustomerService() {
         this.customers = new TreeMap<>(Comparator.comparingLong(Customer::getScores));

@@ -3,7 +3,7 @@ package homework;
 import java.util.ArrayDeque;
 
 public class CustomerReverseOrder {
-    public ArrayDeque<Customer> customers;
+    private final ArrayDeque<Customer> customers;
 
     public CustomerReverseOrder() {
         this.customers = new ArrayDeque<>();
