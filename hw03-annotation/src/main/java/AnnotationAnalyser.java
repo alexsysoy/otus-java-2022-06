@@ -19,36 +19,34 @@ public class AnnotationAnalyser {
     private TestStatistic process(TestsResources resources) {
         TestStatistic result = new TestStatistic();
         for (Method method : resources.tests()) {
+            runBeforeMethod(resources);
             try {
-                Object instance = runBeforeMethod(resources);
-                method.invoke(instance);
-                runAfterMethod(resources);
+                method.invoke(resources.instanceTestClass());
                 result.successTests++;
             } catch (Exception e) {
-                runAfterMethod(resources);
                 System.out.printf("Тест %s выполнился с ошибкой!\n", method.getName());
                 result.failTests++;
+            } finally {
+                runAfterMethod(resources);
             }
             result.totalCountTests++;
         }
         return result;
     }
 
-    private Object runBeforeMethod(TestsResources resources) {
-        return runBasicMethod(resources.clazz(), resources.before());
+    private void runBeforeMethod(TestsResources resources) {
+        runBasicMethod(resources.instanceTestClass(), resources.before());
     }
 
     private void runAfterMethod(TestsResources resources) {
-        runBasicMethod(resources.clazz(), resources.after());
+        runBasicMethod(resources.instanceTestClass(), resources.after());
     }
 
-    private Object runBasicMethod(Class<?> clazz, Method method) {
+    private void runBasicMethod(Object instance, Method method) {
         try {
-            Object instance = instantiate(clazz);
             if (method != null) {
                 method.invoke(instance);
             }
-            return instance;
         } catch (Exception e) {
             String message = "Ошибка при попытке запуска метода: " + method.getName();
             throw new RuntimeException(message, e);
@@ -56,6 +54,7 @@ public class AnnotationAnalyser {
     }
 
     private TestsResources getDataForTest(Class<?> clazz) {
+        Object instanceTestClass = instantiate(clazz);
         Method[] methods = clazz.getMethods();
         Method before = null;
         Method after = null;
@@ -74,7 +73,7 @@ public class AnnotationAnalyser {
                 methodsForTest.add(method);
             }
         }
-        return new TestsResources(clazz, before, after, methodsForTest);
+        return new TestsResources(instanceTestClass, before, after, methodsForTest);
     }
 
     private  <T> T instantiate(Class<T> type) {
