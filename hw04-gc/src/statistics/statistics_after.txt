@@ -1,0 +1,11 @@
+-Xms200m -Xmx200m spend msec:5660, sec:5
+-Xms256m -Xmx256m spend msec:3232, sec:3
+-Xms500m -Xmx500m spend msec:2371, sec:2
+-Xms512m -Xmx512m spend msec:2311, sec:2
+-Xms520m -Xmx520m spend msec:2357, sec:2
+-Xms1024m -Xmx1024m spend msec:2321, sec:2
+-Xms2048m -Xmx2048m spend msec:2518, sec:2
+-Xms8000m -Xmx8000m spend msec:2347, sec:2
+-Xms16000m -Xmx16000m spend msec:2421, sec:2
+
+Оптимально -Xms512m -Xmx512m

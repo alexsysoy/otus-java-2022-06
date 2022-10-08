@@ -1,0 +1,22 @@
+-Xms256m -Xmx256m spend msec: OutOfMemoryError sec: OutOfMemoryError
+-Xms260m -Xmx260m spend msec: OutOfMemoryError sec: OutOfMemoryError
+-Xms265m -Xmx265m spend msec:20178, sec:20
+-Xms270m -Xmx270m spend msec:19871, sec:19
+-Xms300m -Xmx300m spend msec:19193, sec:19
+-Xms310m -Xmx310m spend msec:19635, sec:19
+-Xms1000m -Xmx1000m spend msec:14087, sec:14
+-Xms1500m -Xmx1500m spend msec:13267, sec:13
+-Xms2000m -Xmx2000m spend msec:11775, sec:11
+-Xms3200m -Xmx3200m spend msec:11785, sec:11
+-Xms3250m -Xmx3250m spend msec:11747, sec:11
+-Xms3275m -Xmx3275m spend msec:11527, sec:11
+-Xms3300m -Xmx3300m spend msec:11213, sec:11
+-Xms3325m -Xmx3325m spend msec:11485, sec:11
+-Xms3400m -Xmx3400m spend msec:11861, sec:11
+-Xms3700m -Xmx3700m spend msec:11594, sec:11
+-Xms4000m -Xmx4000m spend msec:11803, sec:11
+-Xms5000m -Xmx5000m spend msec:11630, sec:11
+-Xms6000m -Xmx6000m spend msec:11933, sec:11
+-Xms7000m -Xmx7000m spend msec:12638, sec:12
+
+Оптимально -Xms3300m -Xmx3300m
