@@ -1,6 +1,9 @@
 package ru.otus.crm.model;
 
+import ru.otus.jdbc.mapper.annotation.EntityId;
+
 public class Client {
+    @EntityId
     private Long id;
     private String name;
 
