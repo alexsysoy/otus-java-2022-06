@@ -4,7 +4,6 @@ package ru.otus.crm.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,12 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class Client implements Cloneable {
 
     @Id
@@ -39,8 +38,8 @@ public class Client implements Cloneable {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_id")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Column(name = "client_id")
     private List<Phone> phones;
 
     public Client(String name) {
@@ -57,11 +56,15 @@ public class Client implements Cloneable {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.phones = phones;
+        this.phones = setClientIdInPhones(phones);
     }
 
     @Override
     public Client clone() {
         return new Client(this.id, this.name, this.address.clone(), this.phones);
+    }
+
+    private List<Phone> setClientIdInPhones(List<Phone> phones) {
+        return phones.stream().map(phone -> new Phone(phone.getId(), phone.getNumber(), this)).collect(Collectors.toList());
     }
 }

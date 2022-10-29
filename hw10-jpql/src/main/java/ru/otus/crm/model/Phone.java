@@ -1,9 +1,6 @@
 package ru.otus.crm.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +8,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Phone implements Cloneable {
 
@@ -22,6 +20,9 @@ public class Phone implements Cloneable {
     @Column(name = "number")
     private String number;
 
+    @ManyToOne
+    private Client client;
+
     public Phone(Long id, String number) {
         this.id = null;
         this.number = number;
@@ -29,6 +30,6 @@ public class Phone implements Cloneable {
 
     @Override
     public Phone clone() {
-        return new Phone(this.id, this.number);
+        return new Phone(this.id, this.number, this.client.clone());
     }
 }
