@@ -4,7 +4,6 @@ package crm.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -34,16 +33,6 @@ public class Client implements Cloneable {
     @Column(name = "client_id")
     private List<Phone> phones;
 
-    public Client(String name) {
-        this.id = null;
-        this.name = name;
-    }
-
-    public Client(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public Client(Long id, String name, Address address, List<Phone> phones) {
         this.id = id;
         this.name = name;
@@ -64,9 +53,6 @@ public class Client implements Cloneable {
     public String toString() {
         return "Client{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", address=" + address.getStreet() +
-                ", phones=" + phones.size() +
                 '}';
     }
 }

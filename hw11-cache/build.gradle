@@ -16,6 +16,8 @@ dependencies {
     implementation("org.hibernate:hibernate-core")
     implementation('org.flywaydb:flyway-core')
 
+    implementation('org.apache.commons:commons-lang3:3.12.0')
+
     implementation("org.postgresql:postgresql")
 
     testImplementation("com.h2database:h2")
