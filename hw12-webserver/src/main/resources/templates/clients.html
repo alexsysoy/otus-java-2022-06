@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Клиенты</title>
+</head>
+
+<body>
+<ul>
+    <form action="/clients" method="POST">
+        <table border="1">
+            <caption>Форма добавления клиента:</caption>
+            <tr>
+                <th>Имя:</th>
+                <th>Адрес:</th>
+            </tr>
+            <tr>
+                <td><input size="40" name="name"/></td>
+                <td><input size="40" name="address"/></td>
+            </tr>
+        </table>
+        <input type="submit" value="Добавить клиента" />
+    </form>
+</ul>
+    <br><br>
+<ul>
+    <table border="1">
+        <caption>Список всех клиентов:</caption>
+        <tr>
+            <th><input size="40" value="Номер"/></th>
+            <th><input size="40" value="Имя"/></th>
+            <th><input size="40" value="Адрес"/></th>
+        </tr>
+    </table>
+    <#list clients as client>
+        <table border="1">
+            <tr>
+                <td><input size="40" value="${client.id}"/></td>
+                <td><input size="40" value="${client.name}"/></td>
+                <td><input size="40" value="${client.address.street}"/></td>
+            </tr>
+        </table>
+    </#list>
+</ul>
+</body>
+
