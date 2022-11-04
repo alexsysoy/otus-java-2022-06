@@ -1,5 +1,6 @@
 package demo;
 
+import cachehw.MyCache;
 import core.repository.DataTemplateHibernate;
 import core.repository.HibernateUtils;
 import core.sessionmanager.TransactionManagerHibernate;
@@ -29,7 +30,8 @@ public class DbServiceDemo {
 
         var clients = createClients(1000);
         var dbServiceClient = createDBServiceClient();
-        var dbCacheServiceClient = new DbServiceClientWithCacheDecorator(dbServiceClient);
+        var cache = new MyCache<Long, Client>();
+        var dbCacheServiceClient = new DbServiceClientWithCacheDecorator(dbServiceClient, cache);
 
         System.out.println("-----------------------------------------------------------------");
         System.out.println("Время выполнения с кэшем: " + runTestCase(dbCacheServiceClient, clients));

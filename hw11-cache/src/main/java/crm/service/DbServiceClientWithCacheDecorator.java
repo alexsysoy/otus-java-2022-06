@@ -2,7 +2,6 @@ package crm.service;
 
 import cachehw.HwCache;
 import cachehw.HwListener;
-import cachehw.MyCache;
 import crm.model.Client;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,9 +15,9 @@ public class DbServiceClientWithCacheDecorator implements DBServiceClient, HwLis
     private final HwCache<Long, Client> cache;
 
 
-    public DbServiceClientWithCacheDecorator(DBServiceClient dbServiceClient) {
+    public DbServiceClientWithCacheDecorator(DBServiceClient dbServiceClient, HwCache<Long, Client> cache) {
         this.dbServiceClient = dbServiceClient;
-        cache = new MyCache<>();
+        this.cache = cache;
         cache.addListener(this);
     }
 

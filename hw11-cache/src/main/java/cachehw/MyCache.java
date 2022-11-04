@@ -1,11 +1,15 @@
 package cachehw;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+@Slf4j
 public class MyCache<K, V> implements HwCache<K, V> {
 //Надо реализовать эти методы
     private final Set<HwListener<K, V>> listeners;
@@ -51,6 +55,12 @@ public class MyCache<K, V> implements HwCache<K, V> {
     }
 
     private void notifyAll(K key, V value, String action) {
-        listeners.forEach(listener -> listener.notify(key, value, action));
+        listeners.forEach(listener -> {
+            try {
+                listener.notify(key, value, action);
+            } catch (Exception e) {
+                log.info("Exception in notify: {}", ExceptionUtils.getThrowableCount(e));
+            }
+        });
     }
 }
