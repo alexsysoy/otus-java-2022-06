@@ -1,5 +1,6 @@
 package webserver.server;
 
+import db.crm.service.DBServiceClient;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.LoginService;
@@ -29,12 +30,14 @@ public class ClientWebServerWithBasicSecurity implements ClientWebServer {
     private final TemplateProcessor templateProcessor;
     private final Server server;
     private final LoginService loginService;
+    private final DBServiceClient dbServiceClient;
 
 
-    public ClientWebServerWithBasicSecurity(LoginService loginService, int port, TemplateProcessor templateProcessor) {
+    public ClientWebServerWithBasicSecurity(LoginService loginService, int port, TemplateProcessor templateProcessor, DBServiceClient dbServiceClient) {
         this.loginService = loginService;
         this.templateProcessor = templateProcessor;
         this.server = new Server(port);
+        this.dbServiceClient = dbServiceClient;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class ClientWebServerWithBasicSecurity implements ClientWebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new ClientsServlet(templateProcessor)), "/clients");
+        servletContextHandler.addServlet(new ServletHolder(new ClientsServlet(templateProcessor, dbServiceClient)), "/clients");
         return servletContextHandler;
     }
 
