@@ -2,6 +2,7 @@ package webserver.servlet;
 
 import db.crm.model.Address;
 import db.crm.model.Client;
+import db.crm.model.Phone;
 import db.crm.service.DBServiceClient;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import webserver.services.TemplateProcessor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -42,10 +44,20 @@ public class ClientsServlet extends HttpServlet {
 
         String name = req.getParameter("name");
         String address = req.getParameter("address");
+        String phone = req.getParameter("phone");
 
-        Client client = dbServiceClient.saveClient(new Client(null, name, new Address(null, address), new ArrayList<>()));
+        Client client = dbServiceClient.saveClient(new Client(null, name, new Address(null, address), getPhones(phone)));
         log.info("Added new client: {}", client);
 
         resp.sendRedirect(req.getContextPath() + "/clients");
+    }
+
+    private List<Phone> getPhones(String phone) {
+        var numbers = phone.split(" ");
+        var phones = new ArrayList<Phone>();
+        for (String number : numbers) {
+            phones.add(new Phone(null, number));
+        }
+        return phones;
     }
 }

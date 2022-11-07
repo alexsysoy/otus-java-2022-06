@@ -12,7 +12,7 @@ public class MigrationsExecutorFlyway {
     public MigrationsExecutorFlyway(String dbUrl, String dbUserName, String dbPassword) {
         flyway = Flyway.configure()
                 .dataSource(dbUrl, dbUserName, dbPassword)
-                .locations("classpath:/db/migration")
+                .locations("classpath:/migration")
                 .load();
     }
 
