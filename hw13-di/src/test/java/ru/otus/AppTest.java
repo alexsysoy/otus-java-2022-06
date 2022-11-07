@@ -8,7 +8,11 @@ import ru.otus.appcontainer.AppComponentsContainerImpl;
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 import ru.otus.config.AppConfig;
-import ru.otus.services.*;
+import ru.otus.services.EquationPreparer;
+import ru.otus.services.EquationPreparerImpl;
+import ru.otus.services.IOService;
+import ru.otus.services.IOServiceStreams;
+import ru.otus.services.PlayerService;
 
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
