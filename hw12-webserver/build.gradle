@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.otus'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.apache.commons:commons-lang3:3.12.0')
+
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation("ch.qos.logback:logback-classic")
+    implementation("com.google.code.gson:gson:${Versions.gson}")
+
+    implementation("org.eclipse.jetty:jetty-servlet:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-server:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-webapp:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-security:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-http:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-io:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-util:${Versions.jetty}")
+    implementation("org.freemarker:freemarker:${Versions.freemarker}")
+
+    implementation("org.hibernate:hibernate-core")
+    implementation('org.flywaydb:flyway-core')
+    implementation("org.postgresql:postgresql")
+}
+
