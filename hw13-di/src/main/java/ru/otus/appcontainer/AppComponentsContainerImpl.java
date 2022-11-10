@@ -25,6 +25,30 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         processConfig(initialConfigClass);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public <C> C getAppComponent(Class<C> componentClass) {
+        for (Object component : appComponents) {
+            if (Arrays.stream(component.getClass().getInterfaces()).anyMatch(inter -> inter == componentClass)) {
+                return (C) component;
+            }
+            if (component.getClass() == componentClass) {
+                return (C) component;
+            }
+        }
+        throw new AppException(String.format("There isn't component with class: %s", componentClass.getName()));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <C> C getAppComponent(String componentName) {
+        var result = appComponentsByName.get(componentName);
+        if (result != null) {
+            return (C) result;
+        }
+        throw new AppException(String.format("There isn't component with name: %s", componentName));
+    }
+
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
         var configMethods = new PriorityQueue<Method>(Comparator.comparing(o -> o.getAnnotation(AppComponent.class).order()));
@@ -115,29 +139,5 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         if (!configClass.isAnnotationPresent(AppComponentsContainerConfig.class)) {
             throw new IllegalArgumentException(String.format("Given class is not config %s", configClass.getName()));
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <C> C getAppComponent(Class<C> componentClass) {
-        for (Object component : appComponents) {
-            if (Arrays.stream(component.getClass().getInterfaces()).anyMatch(inter -> inter == componentClass)) {
-                return (C) component;
-            }
-            if (component.getClass() == componentClass) {
-                return (C) component;
-            }
-        }
-        throw new AppException(String.format("There isn't component with class: %s", componentClass.getName()));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <C> C getAppComponent(String componentName) {
-        var result = appComponentsByName.get(componentName);
-        if (result != null) {
-            return (C) result;
-        }
-        throw new AppException(String.format("There isn't component with name: %s", componentName));
     }
 }
