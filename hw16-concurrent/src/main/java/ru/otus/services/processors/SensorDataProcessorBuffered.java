@@ -1,27 +1,24 @@
 package ru.otus.services.processors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 import ru.otus.lib.SensorDataBufferedWriter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
-private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
 
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
-    private final PriorityBlockingQueue<SensorData> dataBuffer;
+    private final ArrayBlockingQueue<SensorData> dataBuffer;
 
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
         this.writer = writer;
-        this.dataBuffer = new PriorityBlockingQueue<>(bufferSize, Comparator.comparing(SensorData::getMeasurementTime));
+        this.dataBuffer = new ArrayBlockingQueue<>(bufferSize);
     }
 
     @Override
@@ -33,14 +30,11 @@ private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuf
     }
 
     public void flush() {
-        if (dataBuffer.size() > 0) {
-            try {
-                var list = new ArrayList<SensorData>();
-                dataBuffer.drainTo(list, bufferSize);
-                writer.writeBufferedData(list);
-            } catch (Exception e) {
-                log.error("Ошибка в процессе записи буфера", e);
-            }
+        if (!dataBuffer.isEmpty()) {
+            var list = new ArrayList<SensorData>();
+            dataBuffer.drainTo(list, bufferSize);
+            list.sort(Comparator.comparing(SensorData::getMeasurementTime));
+            writer.writeBufferedData(list);
         }
     }
 
