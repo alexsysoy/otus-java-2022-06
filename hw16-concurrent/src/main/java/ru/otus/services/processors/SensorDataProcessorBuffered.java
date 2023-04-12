@@ -34,7 +34,9 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
             var list = new ArrayList<SensorData>();
             dataBuffer.drainTo(list, bufferSize);
             list.sort(Comparator.comparing(SensorData::getMeasurementTime));
-            writer.writeBufferedData(list);
+            if (!list.isEmpty()) {
+                writer.writeBufferedData(list);
+            }
         }
     }
 
