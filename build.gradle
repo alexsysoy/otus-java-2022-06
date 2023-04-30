@@ -23,6 +23,10 @@ allprojects {
             dependency "org.openjdk.jmh:jmh-core:${Versions.jmh}"
             dependency "org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}"
             dependency("org.glassfish:jakarta.json:${Versions.glassfishJson}")
+
+            dependency("io.grpc:grpc-netty:${Versions.grpc}")
+            dependency("io.grpc:grpc-protobuf:${Versions.grpc}")
+            dependency("io.grpc:grpc-stub:${Versions.grpc}")
         }
     }
 
