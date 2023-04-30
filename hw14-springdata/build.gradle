@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 
 
-    implementation("com.google.code.gson:gson")
+    implementation("com.google.code.gson:gson:${Versions.gson}")
 }
 
 test {
