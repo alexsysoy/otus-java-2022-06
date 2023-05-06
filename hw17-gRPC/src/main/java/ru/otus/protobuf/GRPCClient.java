@@ -69,7 +69,7 @@ public class GRPCClient {
             if (currentValueFromServer == intValueFromServer) {
                 currentValue++;
             } else {
-                currentValue += intValueFromServer + 1;
+                currentValue = currentValue + 1 + valueFromServer.getAndSet(0);
             }
             currentValueFromServer = intValueFromServer;
             System.out.printf("Current value: %d%n", currentValue);
