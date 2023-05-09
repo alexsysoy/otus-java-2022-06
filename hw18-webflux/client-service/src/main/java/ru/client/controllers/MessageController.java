@@ -3,85 +3,56 @@ package ru.client.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import org.springframework.web.util.HtmlUtils;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import ru.client.domain.Message;
+import ru.client.service.ConnectionService;
+import ru.client.service.DatastoreService;
+import ru.client.util.Utils;
 
 @Controller
 public class MessageController {
-    private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
+    public static final long SECRET_ROOM = 1408;
+    private static final Logger log = LoggerFactory.getLogger(MessageController.class);
 
-    private static final String TOPIC_TEMPLATE = "/topic/response.";
+    private final DatastoreService datastoreService;
+    private final ConnectionService connectionService;
 
-    private final WebClient datastoreClient;
-    private final SimpMessagingTemplate template;
-
-    public MessageController(WebClient datastoreClient, SimpMessagingTemplate template) {
-        this.datastoreClient = datastoreClient;
-        this.template = template;
+    public MessageController(DatastoreService datastoreService, ConnectionService connectionService) {
+        this.datastoreService = datastoreService;
+        this.connectionService = connectionService;
     }
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        logger.info("get message:{}, roomId:{}", message, roomId);
-        saveMessage(roomId, message)
-                .subscribe(msgId -> logger.info("message send id:{}", msgId));
+        log.info("get message:{}, roomId:{}", message, roomId);
+        long id = Utils.parseRoomId(roomId);
 
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
-                new Message(HtmlUtils.htmlEscape(message.messageStr())));
+        if (SECRET_ROOM == id) {
+            log.info("message from room 1408");
+        } else {
+            datastoreService.saveMessage(roomId, message)
+                    .subscribe(msgId -> log.info("message send id:{}", msgId));
+
+            connectionService.sendMessageToFront(roomId, message.messageStr());
+        }
     }
-
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
-        var genericMessage = (GenericMessage<byte[]>) event.getMessage();
-        var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
-        if (simpDestination == null) {
-            logger.error("Can not get simpDestination header, headers:{}", genericMessage.getHeaders());
-            throw new ChatException("Can not get simpDestination header");
-        }
-        var roomId = parseRoomId(simpDestination);
+        log.info("session created");
+        String simpDestination = connectionService.getSimpDestinationFromHeaders(event);
 
-        getMessagesByRoomId(roomId)
-                .doOnError(ex -> logger.error("getting messages for roomId:{} failed", roomId, ex))
-                .subscribe(message -> template.convertAndSend(simpDestination, message));
-    }
+        long id = Utils.parseRoomId(simpDestination);
 
-    private long parseRoomId(String simpDestination) {
-        try {
-            return Long.parseLong(simpDestination.replace(TOPIC_TEMPLATE, ""));
-        } catch (Exception ex) {
-            logger.error("Can not get roomId", ex);
-            throw new ChatException("Can not get roomId");
-        }
-    }
-
-    private Mono<Long> saveMessage(String roomId, Message message) {
-        return datastoreClient.post().uri(String.format("/msg/%s", roomId))
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(message)
-                .exchangeToMono(response -> response.bodyToMono(Long.class));
-    }
-
-    private Flux<Message> getMessagesByRoomId(long roomId) {
-        return datastoreClient.get().uri(String.format("/msg/%s", roomId))
-                .accept(MediaType.APPLICATION_NDJSON)
-                .exchangeToFlux(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToFlux(Message.class);
-                    } else {
-                        return response.createException().flatMapMany(Mono::error);
-                    }
-                });
+        datastoreService.getMessagesByRoomId(id)
+                .doOnNext(message -> log.info("get another message: {}", message.messageStr()))
+                .doOnError(ex -> log.error("getting messages for roomId:{} failed", id, ex))
+                .subscribe(message -> connectionService.sendArchiveMessageToFront(simpDestination, message));
     }
 }
+
+
+
