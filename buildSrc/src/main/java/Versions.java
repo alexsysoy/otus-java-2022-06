@@ -11,4 +11,9 @@ public interface Versions {
     String grpc = "1.44.1";
     String errorProneAnnotations = "2.11.0";
     String tomcatAnnotationsApi = "6.0.53";
+
+    String sockjs = "1.5.1";
+    String stomp = "2.3.4";
+    String bootstrap = "5.1.3";
+    String springDocOpenapiUi = "1.6.7";
 }
